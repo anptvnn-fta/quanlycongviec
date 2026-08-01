@@ -16,6 +16,7 @@
 body {
   margin: 0;
   padding: 32px 16px;
+  overflow-x: hidden;   /* chốt chặn cuối: không bao giờ có thanh cuộn ngang */
   background: var(--nen);
   color: var(--chu);
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
@@ -111,7 +112,13 @@ input[type="text"]:focus { outline: 2px solid var(--chinh); outline-offset: 0; }
 /* Một dòng công việc hiển thị theo mẫu:
    [Đang làm] Rà soát Thông tư 41/2016 — phụ trách: Nguyễn Văn A */
 .thong-tin { flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.thong-tin .ten { font-weight: 600; overflow-wrap: anywhere; }
+/* overflow-wrap: anywhere cho MỌI phần chữ — một chuỗi dài không dấu cách
+   (ví dụ mã văn bản dài) nếu không ngắt được sẽ đẩy rộng cả trang và sinh
+   thanh cuộn ngang. min-width: 0 để flex item được phép co lại. */
+.thong-tin .ten,
+.thong-tin .nguoi,
+.thong-tin .ten-nguoi { min-width: 0; overflow-wrap: anywhere; }
+.thong-tin .ten { font-weight: 600; }
 .thong-tin .nguoi { color: var(--chu-mo); font-size: 13px; }
 .thong-tin .ten-nguoi { color: var(--chu); }
 

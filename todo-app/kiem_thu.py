@@ -164,6 +164,32 @@ dat = "mật khẩu" not in h
 ghi("Chặn thông báo giả mạo qua URL", dat,
     "mã lỗi lạ bị bỏ qua, không hiện thông báo" if dat else "vẫn hiện thông báo bịa từ URL")
 
+# (e) Chuỗi dài không được làm tràn ngang trang (cần playwright; không có thì bỏ qua)
+try:
+    from playwright.sync_api import sync_playwright
+    post("/them", {"ten": "Z" * 300, "nguoi_phu_trach": "W" * 300})
+    with sync_playwright() as p:
+        b = p.chromium.launch()
+        pg = b.new_page(viewport={"width": 1050, "height": 700})
+        pg.goto(GOC)
+        tran = pg.evaluate(
+            "() => document.documentElement.scrollWidth > document.documentElement.clientWidth"
+        )
+        b.close()
+    ghi("Không tràn ngang khi tên quá dài", not tran,
+        "chữ tự xuống dòng, không sinh thanh cuộn ngang" if not tran else "trang bị cuộn ngang")
+except ImportError:
+    print("  ⏭️  BỎ QUA    | Không tràn ngang khi tên quá dài (chưa cài playwright)")
+
+# --- Dọn dẹp ---
+# Bắt buộc: script tạo ra dữ liệu rác (chuỗi ZZZ..., WWW... để thử giới hạn
+# độ dài). Không dọn thì chúng nằm lại trong bộ nhớ server và hiện ra trên
+# giao diện, người dùng tưởng là lỗi ứng dụng.
+don_sach()
+con_lai = len(lay_ten(get("/?loc=tat_ca")))
+print("-" * 74)
+print(f"Đã dọn dữ liệu kiểm thử — còn lại {con_lai} công việc trong danh sách.")
+
 # --- Tổng kết ---
 print("-" * 74)
 so_dat = sum(1 for _, d, _ in ket_qua if d)
