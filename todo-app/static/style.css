@@ -1,0 +1,140 @@
+/* Giao diện đơn giản, gọn — ưu tiên dễ đọc trên màn hình làm việc */
+
+:root {
+  --nen: #f4f6f8;
+  --the: #ffffff;
+  --vien: #dfe4ea;
+  --chu: #1f2933;
+  --chu-mo: #6b7684;
+  --chinh: #8b1a1a;   /* tông đỏ sẫm cho nút chính */
+  --xong: #1e7d4f;
+  --xoa: #b23b3b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 32px 16px;
+  background: var(--nen);
+  color: var(--chu);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 15px;
+}
+
+.khung { max-width: 820px; margin: 0 auto; }
+
+header h1 { margin: 0 0 4px; font-size: 24px; }
+.phu-de { margin: 0 0 20px; color: var(--chu-mo); font-size: 13px; }
+
+/* Khối trắng dùng chung cho form thêm và từng dòng công việc */
+.the {
+  background: var(--the);
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+/* --- Thông báo lỗi --- */
+.loi {
+  background: #fdecec;
+  border: 1px solid #f5b5b5;
+  color: #9a2020;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+/* --- Form thêm mới --- */
+.form-them { display: flex; gap: 8px; flex-wrap: wrap; }
+.form-them input[name="ten"] { flex: 2 1 240px; }
+.form-them input[name="nguoi_phu_trach"] { flex: 1 1 160px; }
+
+input[type="text"] {
+  padding: 9px 11px;
+  border: 1px solid var(--vien);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+input[type="text"]:focus { outline: 2px solid var(--chinh); outline-offset: 0; }
+
+/* --- Nút --- */
+.nut {
+  display: inline-block;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nut-chinh { background: var(--chinh); color: #fff; }
+.nut-phu   { background: #fff; color: var(--chu); border-color: var(--vien); }
+.nut-xoa   { background: #fff; color: var(--xoa); border-color: #edc4c4; }
+.nut:hover { filter: brightness(0.95); }
+
+/* --- Bộ lọc trạng thái --- */
+.bo-loc { display: flex; gap: 8px; margin: 18px 0 12px; flex-wrap: wrap; }
+.bo-loc a {
+  padding: 7px 13px;
+  border: 1px solid var(--vien);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--chu-mo);
+  text-decoration: none;
+  font-size: 13px;
+}
+.bo-loc a.dang-chon { background: var(--chinh); border-color: var(--chinh); color: #fff; }
+
+/* --- Danh sách công việc --- */
+.danh-sach { list-style: none; margin: 0; padding: 0; }
+
+.cong-viec { display: flex; align-items: center; gap: 12px; }
+.cong-viec form { margin: 0; }
+
+/* Ô tick đánh dấu hoàn thành */
+.o-tick {
+  width: 22px; height: 22px;
+  border: 1.5px solid var(--vien);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--xong);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Một dòng công việc hiển thị theo mẫu:
+   [Đang làm] Rà soát Thông tư 41/2016 — phụ trách: Nguyễn Văn A */
+.thong-tin { flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.thong-tin .ten { font-weight: 600; overflow-wrap: anywhere; }
+.thong-tin .nguoi { color: var(--chu-mo); font-size: 13px; }
+.thong-tin .ten-nguoi { color: var(--chu); }
+
+/* Công việc đã xong: làm mờ và gạch ngang tên */
+.da-xong .thong-tin .ten { text-decoration: line-through; color: var(--chu-mo); font-weight: 500; }
+
+/* Nhãn trạng thái */
+.nhan { padding: 3px 10px; border-radius: 999px; font-size: 12px; white-space: nowrap; }
+.nhan-dang_lam { background: #fff4e0; color: #96590d; }
+.nhan-xong     { background: #e6f5ed; color: var(--xong); }
+
+.thao-tac { display: flex; gap: 6px; align-items: center; }
+.thao-tac .nut { padding: 6px 11px; font-size: 13px; }
+
+/* --- Form sửa (thay chỗ dòng hiển thị) --- */
+.form-sua { display: flex; gap: 8px; width: 100%; flex-wrap: wrap; align-items: center; }
+.form-sua input[name="ten"] { flex: 2 1 220px; }
+.form-sua input[name="nguoi_phu_trach"] { flex: 1 1 150px; }
+
+.trong { text-align: center; color: var(--chu-mo); padding: 28px 0; }
+
+/* Màn hình hẹp: xếp dọc cho dễ bấm */
+@media (max-width: 560px) {
+  .cong-viec { flex-wrap: wrap; }
+  .thong-tin { flex: 1 1 60%; }
+}

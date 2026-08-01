@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý công việc — Nhóm KTNB</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="khung">
+
+  <header>
+    <h1>Quản lý công việc</h1>
+    <p class="phu-de">Nhóm Kiểm toán nội bộ — dữ liệu lưu tạm trong bộ nhớ</p>
+  </header>
+
+  {# Thông báo lỗi (nếu có), truyền qua query string sau khi redirect #}
+  {% if loi %}
+    <div class="loi">{{ loi }}</div>
+  {% endif %}
+
+  {# ---- Form thêm công việc mới ---- #}
+  <form class="the form-them" action="{{ url_for('them_cong_viec') }}" method="post">
+    <input type="hidden" name="loc" value="{{ bo_loc }}">
+    <input type="text" name="ten" placeholder="Tên công việc" maxlength="200" autofocus>
+    <input type="text" name="nguoi_phu_trach" placeholder="Người phụ trách" maxlength="100">
+    <button type="submit" class="nut nut-chinh">Thêm công việc</button>
+  </form>
+
+  {# ---- Bộ lọc theo trạng thái ---- #}
+  <nav class="bo-loc">
+    <a href="{{ url_for('trang_chu', loc='tat_ca') }}"
+       class="{{ 'dang-chon' if bo_loc == 'tat_ca' }}">Tất cả ({{ tong_so }})</a>
+    <a href="{{ url_for('trang_chu', loc='dang_lam') }}"
+       class="{{ 'dang-chon' if bo_loc == 'dang_lam' }}">Đang làm ({{ so_dang_lam }})</a>
+    <a href="{{ url_for('trang_chu', loc='xong') }}"
+       class="{{ 'dang-chon' if bo_loc == 'xong' }}">Xong ({{ so_xong }})</a>
+  </nav>
+
+  {# ---- Danh sách công việc ---- #}
+  {% if cong_viecs %}
+    <ul class="danh-sach">
+      {% for cv in cong_viecs %}
+        <li class="the cong-viec {{ 'da-xong' if cv.trang_thai == 'xong' }}">
+
+          {% if id_dang_sua == cv.id %}
+            {# Chế độ sửa: hiện form thay cho dòng hiển thị thường #}
+            <form class="form-sua" action="{{ url_for('sua_cong_viec', cong_viec_id=cv.id) }}" method="post">
+              <input type="hidden" name="loc" value="{{ bo_loc }}">
+              <input type="text" name="ten" value="{{ cv.ten }}" maxlength="200" required autofocus>
+              <input type="text" name="nguoi_phu_trach" value="{{ cv.nguoi_phu_trach }}" maxlength="100">
+              <button type="submit" class="nut nut-chinh">Lưu</button>
+              <a class="nut nut-phu" href="{{ url_for('trang_chu', loc=bo_loc) }}">Hủy</a>
+            </form>
+
+          {% else %}
+            {# Chế độ xem: checkbox đổi trạng thái + thông tin + các nút thao tác #}
+            <form action="{{ url_for('doi_trang_thai', cong_viec_id=cv.id) }}" method="post">
+              <input type="hidden" name="loc" value="{{ bo_loc }}">
+              <button type="submit" class="o-tick" title="Đánh dấu hoàn thành / chưa hoàn thành">
+                {{ '✓' if cv.trang_thai == 'xong' else '' }}
+              </button>
+            </form>
+
+            {# Định dạng chuẩn theo mẫu:
+               [Đang làm] Rà soát Thông tư 41/2016 — phụ trách: Nguyễn Văn A #}
+            <div class="thong-tin">
+              <span class="nhan nhan-{{ cv.trang_thai }}">[{{ nhan_trang_thai[cv.trang_thai] }}]</span>
+              <span class="ten">{{ cv.ten }}</span>
+              <span class="nguoi">— phụ trách: <span class="ten-nguoi">{{ cv.nguoi_phu_trach }}</span></span>
+            </div>
+
+            <div class="thao-tac">
+              <a class="nut nut-phu" href="{{ url_for('trang_chu', loc=bo_loc, sua=cv.id) }}">Sửa</a>
+              <form action="{{ url_for('xoa_cong_viec', cong_viec_id=cv.id) }}" method="post"
+                    onsubmit="return confirm('Xóa công việc này?');">
+                <input type="hidden" name="loc" value="{{ bo_loc }}">
+                <button type="submit" class="nut nut-xoa">Xóa</button>
+              </form>
+            </div>
+          {% endif %}
+
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="trong">Chưa có công việc nào ở mục này.</p>
+  {% endif %}
+
+</div>
+</body>
+</html>
